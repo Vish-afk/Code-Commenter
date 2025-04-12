@@ -27,8 +27,7 @@ The system will output an explanation comment for the code you provided.
 
 Project Structure
 .
-├─ app.py            # UI
-|
-├─ model.py          # Comment generation logic
-|
-├─ requirements.txt  # Dependencies for the project
+├── app.py            # Streamlit web interface
+├── model.py          # Code comment generation logic
+├── requirements.txt  # List of dependencies
+
