@@ -1,7 +1,6 @@
 import requests
 
-# Replace this with your own Hugging Face token
-HF_TOKEN = "your_hugging_face_token_here"
+HF_TOKEN = "put your token here"
 
 API_URL = "https://api-inference.huggingface.co/models/bigcode/starcoder"
 headers = {
@@ -9,20 +8,33 @@ headers = {
 }
 
 def generate_comment(code_snippet: str) -> str:
-    # Creating a prompt to ask for a code explanation
-    prompt = f"Explain the specific functionality of this Python code:\n\n{code_snippet}\n\nProvide a detailed comment about what this code does."
+    prompt = f"""
+    Please explain the following Python code in detail, step-by-step. 
+    Include the purpose of each part of the code, including the loop and the list operations.
+    
+    Code:
+    {code_snippet}
+    
+    Detailed Comment:
+    """
     
     payload = {
         "inputs": prompt,
-        "parameters": {"max_new_tokens": 100}
+        "parameters": {"max_new_tokens": 150}
     }
 
-    response = requests.post(API_URL, headers=headers, json=payload)
-
     try:
+        response = requests.post(API_URL, headers=headers, json=payload)
+        response.raise_for_status()  
+        
         result = response.json()
+        
         if "error" in result:
             return f"⚠️ API Error: {result['error']}"
-        return result[0]["generated_text"].split("Comment:")[-1].strip()
+        
+        return result[0]["generated_text"].strip()
+        
+    except requests.exceptions.RequestException as e:
+        return f"❌ Request failed: {e}"
     except Exception as e:
         return f"❌ Failed to generate comment: {e}"
